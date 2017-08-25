@@ -2,7 +2,7 @@
 
 function main {
   fogg fn package
-  sam local generate-event api -r "/$(shell cut -d/ -f4 .fogg-name)/$(shell cut -d/ -f6 .fogg-name)" | sam local invoke -t sam.json | jq '.body |= fromjson'
+  sam local generate-event api -r "/$(cut -d/ -f4 .fogg-name)/$(cut -d/ -f6 .fogg-name)" | sam local invoke -t sam.json | jq '.body |= fromjson'
 }
 
 source sub "$BASH_SOURCE" "$@"
