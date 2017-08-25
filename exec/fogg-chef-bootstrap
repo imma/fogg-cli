@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+function main {
+  local hst_chef="$1"; shift
+
+  local hst_node
+  for hst_node in "$@"; do
+    ssh -A "$hst_chef" \
+      sudo -H env SSH_AUTH_SOCK='$SSH_AUTH_SOCK' \
+        /opt/opscode/embedded/bin/knife bootstrap --sudo \
+          --node-name "$(ssh -o StrictHostKeyChecking=no -o BatchMode=yes "$hst_node" hostname -f)" 
+          --ssh-user ubuntu "$hst_node"
+  done
+}
+
+source sub "$BASH_SOURCE" "$@"
