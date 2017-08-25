@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
 
+function main {
+  chalice package .
+  fogg fmt
+}
+
 source sub "$BASH_SOURCE" "$@"

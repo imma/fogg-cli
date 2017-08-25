@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+function main {
+  fogg fn package
+  fogg plan
+  fogg apply
+}
+
+source sub "$BASH_SOURCE" "$@"

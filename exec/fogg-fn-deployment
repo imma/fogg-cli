@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+function main {
+  tf state rm aws_api_gateway_deployment.service
+  fogg plan
+  fogg apply
+}
+
+source sub "$BASH_SOURCE" "$@"
