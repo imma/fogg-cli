@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+function main {
+  local nm_group="$1"; shift
+
+  aws ec2 revoke-security-group-ingress \
+    --group-id "$(aqq --arg name "$nm_group" '$security_groups.SecurityGroups | map(select(.GroupName == $name)) | .[].GroupId')" \
+    --protocol tcp --port 22 --cidr "$(curl -s http://ipinfo.io | jq -r '.ip')/32"
+}
+
+source sub "$BASH_SOURCE" "$@"
