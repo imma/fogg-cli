@@ -5,11 +5,19 @@ function main {
   source "$shome/script/profile"
   source normalize
 
-  ln -nfs ../module .
-  if [[ -f main.tf ]]; then
-    tf init -backend=false
-    tf validate -check-variables=false
+  if [[ "$#" == 0 ]]; then
+    set -- .
   fi
+
+  for a in "$@"; do
+    pushd "$a"
+    ln -nfs ../module .
+    if [[ -f main.tf ]]; then
+      tf init -backend=false
+      tf validate -check-variables=false
+    fi
+    popd
+  done
 }
 
 source sub "$BASH_SOURCE" "$@"
