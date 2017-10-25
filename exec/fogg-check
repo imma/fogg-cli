@@ -12,8 +12,7 @@ function main {
   for a in "$@"; do
     pushd "$a"
     ln -nfs ../module .
-    if [[ -f main.tf ]]; then
-      tf fmt
+    if [[ -f main.tf || -f terraform.tf.json ]]; then
       tf init -backend=false
       tf validate -check-variables=false
     fi
