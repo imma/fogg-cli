@@ -12,7 +12,7 @@ function main {
   local nm_svc="$(echo "$nm_chamber" | cut -d- -f4)"
   nm_svc="${nm_svc%-}"
 
-  exec chamber exec${nm_org:+ ${nm_org}}${nm_env:+ ${nm_env}}${nm_app:+ ${nm_app}}${nm_svc:+ ${nm_svc}} -- "$@"
+  exec chamber exec org ${nm_org:+ ${nm_org}}${nm_env:+ ${nm_env}}${nm_app:+ ${nm_app}}${nm_svc:+ ${nm_svc}} -- "$@"
 }
 
 source sub "$BASH_SOURCE" "$@"
