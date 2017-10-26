@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+function main {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+  source "$shome/script/profile"
+  source normalize
+
+  local nm_chamber="${1}-"; shift
+  local nm_org="$(echo "$nm_chamber" | cut -d- -f1)"
+  local nm_env="$(echo "$nm_chamber" | cut -d- -f2)"
+  local nm_app="$(echo "$nm_chamber" | cut -d- -f3)"
+  local nm_svc="$(echo "$nm_chamber" | cut -d- -f4)"
+  nm_svc="${nm_svc%-}"
+
+  exec chamber exec${nm_org:+ ${nm_org}}${nm_env:+ ${nm_env}}${nm_app:+ ${nm_app}}${nm_svc:+ ${nm_svc}} -- "$@"
+}
+
+source sub "$BASH_SOURCE" "$@"
