@@ -13,8 +13,7 @@ function main {
     pushd "$a"
     ln -nfs ../module .
     if [[ -f main.tf || -f terraform.tf.json ]]; then
-      tf init -backend=false
-      tf validate -check-variables=false
+      tf check
     fi
     popd
   done
