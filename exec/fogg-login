@@ -6,16 +6,28 @@ function main {
   source normalize
 
   local nm_profile
+  local nm_user
 
-  if [[ "$#" == 0 ]]; then
-    nm_profile="${AWS_VAULT}"
-  else
-    nm_profile="$1"; shift
+  if [[ -n "${1:-}" ]]; then
+    case "$1" in
+      *@*)
+        nm_user="${1%%@*}"
+        nm_profile="${1##*@}"
+        shift
+        ;;
+      *)
+        nm_profile="$1"; shift
+        ;;
+    esac
   fi
 
-  local nm_user="$(cat "${BOARD_PATH}/.aws/assume" | jq -r --arg vault "$nm_profile" '.[$vault].mfa | split("/")[-1]')"
+  if [[ -z "$nm_user" ]]; then
+    nm_user="$(cat "${BOARD_PATH}/.aws/assume" | jq -r --arg vault "$nm_profile" '.[$vault].mfa | split("/")[-1]')"
+  fi
 
-  aws vault login "$nm_profile" -t "$(imma totp "$nm_user")" -- "$@"
+
+  unset AWS_SESSION_TOKEN AWS_VAULT AWS_SECRET_ACCESS_KEY AWS_ACCESS_KEY_ID AWS_SECURITY_TOKEN
+  exec aws vault login "$nm_profile" -t "$(imma totp "$nm_user")" -- "$@"
 }
 
 source sub "$BASH_SOURCE" "$@"
