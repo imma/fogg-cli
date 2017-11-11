@@ -21,7 +21,7 @@ function main {
     esac
   fi
 
-  if [[ -z "$nm_user" ]]; then
+  if [[ -z "${nm_user:-}" ]]; then
     nm_user="$(cat "${BOARD_PATH}/.aws/assume" | jq -r --arg vault "$nm_profile" '.[$vault].mfa | split("/")[-1]')"
   fi
 
