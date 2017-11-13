@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+function main {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+  source "$shome/script/profile"
+  source normalize
+
+  eval $(fogg exec env | grep FOGG_ | perl -pe 's{^}{export };s{=}{="};s{$}{"}' | sort)
+  exec "$SHELL"
+}
+
+source sub "$BASH_SOURCE" "$@"
