@@ -11,12 +11,18 @@ function main {
   local nm_svc="$(echo "$nm_chamber" | cut -d- -f3-)"
   nm_svc="${nm_svc%-}"
 
-  eval $(
-    aws ssm describe-parameters --filters Key=Name,Values=global.,org.${nm_env:+,${nm_env}.}${nm_app:+,${nm_env}-${nm_app}.}${nm_svc:+,${nm_env}-${nm_app}-${nm_svc}.} | jq -r '.Parameters[].Name' \
-      | xargs -n 10 aws ssm get-parameters --with-decryption --names \
-      | jq -r '.Parameters[] | "export \(.Name | gsub("^[^\\.]+\\.";"") | ascii_upcase | @sh)=\(.Value | @sh)"'
-  )
-  exec "$@"
+  #eval $(
+  #  aws ssm describe-parameters --filters Key=Name,Values=global.,org.${nm_env:+,${nm_env}.}${nm_app:+,${nm_env}-${nm_app}.}${nm_svc:+,${nm_env}-${nm_app}-${nm_svc}.} | jq -r '.Parameters[].Name' \
+  #    | xargs -n 10 aws ssm get-parameters --with-decryption --names \
+  #    | jq -r '.Parameters[] | "export \(.Name | gsub("^[^\\.]+\\.";"") | ascii_upcase | @sh)=\(.Value | @sh)"'
+  #)
+  exec \
+    chamber exec global -- \
+    chamber exec org 2>/dev/null -- \
+    chamber exec "${nm_env}" -- \
+    chamber exec "${nm_env}-${nm_app}" -- \
+    chamber exec "${nm_env}-${nm_app}-${nm_svc}" -- \
+      "$@"
 }
 
 source sub "$BASH_SOURCE" "$@"
