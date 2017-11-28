@@ -23,7 +23,7 @@ function main {
     set -- bash -il
   fi
 
-  exec fogg assume "$nm_profile" fogg chamber "$nm_app" "$@"
+  exec fogg assume "$nm_profile" chamber exec "$nm_app" -- "$@"
 }
 
 source sub "$BASH_SOURCE" "$@"
