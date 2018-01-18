@@ -25,9 +25,15 @@ function main {
     nm_user="$(cat "${BOARD_PATH}/.aws/assume" | jq -r --arg vault "$nm_profile" '.[$vault].mfa | split("/")[-1]')"
   fi
 
-
+  export CONTEXT_ORG="$nm_profile"
   unset AWS_SESSION_TOKEN AWS_VAULT AWS_SECRET_ACCESS_KEY AWS_ACCESS_KEY_ID AWS_SECURITY_TOKEN
-  exec aws vault login "$nm_profile" -t "$(imma totp "$nm_user")" -- "$@"
+  
+  local code="$(op assume "$(cat "${BOARD_PATH}/.aws/assume" | jq -r --arg org "$CONTEXT_ORG" '.[$org].op')" imma totp "$nm_user")"
+
+  local url_login="$(aws vault login "$nm_profile" -t "$code" -s)"
+  open 'https://console.aws.amazon.com/iam/logout!doLogout'
+  sleep 2
+  open "$url_login"
 }
 
 source sub "$BASH_SOURCE" "$@"
