@@ -30,10 +30,8 @@ function main {
   
   local code="$(op assume "$(cat "${BOARD_PATH}/.aws/assume" | jq -r --arg org "$CONTEXT_ORG" '.[$org].op')" imma totp "$nm_user")"
 
-  local url_login="$(aws vault login "$nm_profile" -t "$code" -s)"
   open 'https://console.aws.amazon.com/iam/logout!doLogout'
-  sleep 2
-  open "$url_login"
+  aws vault login "$nm_profile" -t "$code"
 }
 
 source sub "$BASH_SOURCE" "$@"
