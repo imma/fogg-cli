@@ -37,6 +37,7 @@ function main {
   local code=
 
   if ! aws-vault list --sessions | egrep "^${CONTEXT_ORG} session" >/dev/null; then
+    echo "getting aws-vault totp code..." 1>&2
     code="$(op assume "$(cat "${BOARD_PATH}/.aws/assume" | jq -r --arg org "$CONTEXT_ORG" '.[$org].op')" imma totp "$nm_user")"
   fi
 
@@ -48,7 +49,7 @@ function main {
       ;;
     *)
       if tty >/dev/null; then
-        echo "enter your aws-vault password..." 1>&2
+        echo "enter aws-vault key password..." 1>&2
       fi
       ;;
   esac
