@@ -38,7 +38,19 @@ function main {
 
   local tmp_env="$(mktemp -t XXXXXX)"
   trap "$(printf 'rm -f %q' "$tmp_env")" EXIT
-  aws vault exec "$nm_profile" --assume-role-ttl=60m -m "${code}" -- env | grep ^AWS_ | sed 's#^#export #' > "$tmp_env"
+  export AWS_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-us-east-1}}"
+  case "${DISTRIB_ID}" in
+    Darwin)
+      opt_aws_vault=
+      ;;
+    *)
+      opt_aws_vault='-n'
+      if tty >/dev/null; then
+        echo "enter your aws-vault password..." 1>&2
+      fi
+      ;;
+  esac
+  aws vault exec ${opt_aws_vault} "$nm_profile" --assume-role-ttl=60m -m "${code}" -- env | grep ^AWS_ | sed 's#^#export #' > "$tmp_env"
   source "$tmp_env"
   rm -f "$tmp_env"
 
