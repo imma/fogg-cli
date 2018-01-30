@@ -29,7 +29,7 @@ function main {
     set -- bash -l
   fi
 
-  export AWS_SESSION_EXPIRATION="$(date -d "1 hour" -u +"%Y-%m-%dT%H:%M:%SZ")"
+  export AWS_SESSION_EXPIRATION="$(gdate -d "1 hour" -u +"%Y-%m-%dT%H:%M:%SZ")"
 
   export CONTEXT_ORG="$nm_profile"
   unset AWS_SESSION_TOKEN AWS_VAULT AWS_SECRET_ACCESS_KEY AWS_ACCESS_KEY_ID AWS_SECURITY_TOKEN
