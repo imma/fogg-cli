@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+function main {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+  source "$shome/script/profile"
+  source normalize
+
+  local nm_profile
+
+  if [[ -n "${1:-}" ]]; then
+    case "$1" in
+      *@*)
+        nm_profile="${1##*@}"
+        shift
+        ;;
+      *)
+        nm_profile="$1"; shift
+        ;;
+    esac
+  fi
+
+  export CONTEXT_ORG="$nm_profile"
+
+  aws-vault remove "${CONTEXT_ORG}" -s
+}
+
+source sub "$BASH_SOURCE" "$@"
