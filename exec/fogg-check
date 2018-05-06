@@ -11,7 +11,7 @@ function main {
 
   for a in "$@"; do
     pushd "$a"
-    ln -nfs ../module .
+    ln -nfs ../.module .
     if [[ "$(ls -d *.tf *.tf.json 2>/dev/null | wc -l | awk '{print $1}')" -gt 0 ]]; then
       tf check
     fi
