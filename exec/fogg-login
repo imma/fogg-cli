@@ -22,13 +22,13 @@ function main {
   fi
 
   if [[ -z "$nm_user" ]]; then
-    nm_user="$(cat "${BOARD_PATH}/.aws/assume" | jq -r --arg vault "$nm_profile" '.[$vault].mfa | split("/")[-1]')"
+    nm_user="$(cat "${AWS_CONFIG_FILE%/config}/assume" | jq -r --arg vault "$nm_profile" '.[$vault].mfa | split("/")[-1]')"
   fi
 
   export CONTEXT_ORG="$nm_profile"
   unset AWS_SESSION_TOKEN AWS_VAULT AWS_SECRET_ACCESS_KEY AWS_ACCESS_KEY_ID AWS_SECURITY_TOKEN
   
-  local code="$(op assume "$(cat "${BOARD_PATH}/.aws/assume" | jq -r --arg org "$CONTEXT_ORG" '.[$org].op')" imma totp "$nm_user")"
+  local code="$(op assume "$(cat "${AWS_CONFIG_FILE%/config}/assume" | jq -r --arg org "$CONTEXT_ORG" '.[$org].op')" imma totp "$nm_user")"
 
   open 'https://console.aws.amazon.com/iam/logout!doLogout'
   aws vault login "$nm_profile" -t "$code"
