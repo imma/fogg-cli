@@ -5,8 +5,12 @@ function main {
   source "$shome/script/profile"
   source normalize
 
-  eval $(fogg exec env | grep FOGG_ | perl -pe 's{^}{export };s{=}{="};s{$}{"}' | sort)
-  exec "$SHELL"
+  if [[ "$#" == 0 ]]; then
+    set -- "$SHELL"
+  fi
+
+  eval $(fogg account tf env fogg_ | perl -pe 's{^}{export };s{=}{="};s{$}{"}' | sort)
+  exec "$@"
 }
 
 source sub "$BASH_SOURCE" "$@"
