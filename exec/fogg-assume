@@ -22,7 +22,7 @@ function main {
   fi
 
   if [[ -z "${nm_user:-}" ]]; then
-    nm_user="$(cat "${BOARD_PATH}/.aws/assume" | jq -r --arg vault "$nm_profile" '.[$vault].mfa | split("/")[-1]')"
+    nm_user="$(cat "${AWS_CONFIG_FILE%/config}/assume" | jq -r --arg vault "$nm_profile" '.[$vault].mfa | split("/")[-1]')"
   fi
 
   if [[ "$#" == 0 ]]; then
