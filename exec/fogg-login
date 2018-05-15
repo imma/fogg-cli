@@ -5,33 +5,13 @@ function main {
   source "$shome/script/profile"
   source normalize
 
-  local nm_profile
-  local nm_user
+  export CONTEXT_ORG="$1"; shift
 
-  if [[ -n "${1:-}" ]]; then
-    case "$1" in
-      *@*)
-        nm_user="${1%%@*}"
-        nm_profile="${1##*@}"
-        shift
-        ;;
-      *)
-        nm_profile="$1"; shift
-        ;;
-    esac
-  fi
-
-  if [[ -z "$nm_user" ]]; then
-    nm_user="$(cat "${AWS_CONFIG_FILE%/config}/assume" | jq -r --arg vault "$nm_profile" '.[$vault].mfa | split("/")[-1]')"
-  fi
-
-  export CONTEXT_ORG="$nm_profile"
   unset AWS_SESSION_TOKEN AWS_VAULT AWS_SECRET_ACCESS_KEY AWS_ACCESS_KEY_ID AWS_SECURITY_TOKEN
   
-  local code="$(op assume "$(cat "${AWS_CONFIG_FILE%/config}/assume" | jq -r --arg org "$CONTEXT_ORG" '.[$org].op')" imma totp "$nm_user")"
-
+  local code="$(imma code "${AWS_CONFIG_FILE%/config}/assume" "$CONTEXT_ORG")"
   open 'https://console.aws.amazon.com/iam/logout!doLogout'
-  aws vault login "$nm_profile" -t "$code"
+  aws vault login "$CONTEXT_ORG" -t "$code"
 }
 
 source sub "$BASH_SOURCE" "$@"
