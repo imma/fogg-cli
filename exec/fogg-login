@@ -5,11 +5,10 @@ function main {
   source "$shome/script/profile"
   source normalize
 
-  export CONTEXT_ORG="$1"; shift
-
   unset AWS_SESSION_TOKEN AWS_VAULT AWS_SECRET_ACCESS_KEY AWS_ACCESS_KEY_ID AWS_SECURITY_TOKEN
   
-  local code="$(imma code "${AWS_CONFIG_FILE%/config}/assume" "$CONTEXT_ORG")"
+  export CONTEXT_ORG="$1"; shift
+  local code="$("${CONTEXT_ORG}" code)"
   open 'https://console.aws.amazon.com/iam/logout!doLogout'
   aws vault login "$CONTEXT_ORG" -t "$code"
 }
