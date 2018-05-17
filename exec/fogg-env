@@ -7,23 +7,23 @@ function main {
   
   case "$#" in
     0)
-      echo "ERROR: need to specific profile and app name" 1>&2
-      return 1
-      ;;
-    1)
-      echo "ERROR: need to specific app name" 1>&2
+      echo "ERROR: need to specific profile, app name optional" 1>&2
       return 1
       ;;
   esac
 
   local nm_profile="$1"; shift
-  local nm_app="$1"; shift
+  local nm_app="${1:-}"
 
-  if [[ "$#" == 0 ]]; then
-    set -- bash -il
+  if [[ -n "${nm_app}" ]]; then
+    shift
   fi
 
-  exec fogg assume "$nm_profile" chamber exec "$nm_app" -- "$@"
+  if [[ "$#" == 0 ]]; then
+    set -- env
+  fi
+
+  exec fogg assume "$nm_profile" ${nm_app:+chamber exec "${nm_app}"} -- "$@"
 }
 
 source sub "$BASH_SOURCE" "$@"

@@ -10,7 +10,7 @@ function main {
   fi
 
   eval $(fogg account tf env fogg_ | perl -pe 's{^}{export };s{=}{="};s{$}{"}' | sort)
-  exec "$@"
+  exec fogg account "$@"
 }
 
 source sub "$BASH_SOURCE" "$@"
