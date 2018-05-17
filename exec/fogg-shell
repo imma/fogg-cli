@@ -10,6 +10,8 @@ function main {
   fi
 
   eval $(fogg account tf env fogg_ | perl -pe 's{^}{export };s{=}{="};s{$}{"}' | sort)
+  export AWS_REGION="${fogg__region}"
+  export AWS_DEFAULT_REGION="${fogg__region}"
   exec fogg account "$@"
 }
 
