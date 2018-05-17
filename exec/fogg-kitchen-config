@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+function main {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+  source "$shome/script/profile"
+  source normalize
+
+  local filter=
+  case "$#" in
+    0)
+      set -- .
+      ;;
+    1)
+      true
+      ;;
+    *)
+      filter="$1"; shift
+      ;;
+  esac
+
+  exec fogg kitchen diagnose $filter | python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | jq "$@"
+
+}
+
+source sub "$BASH_SOURCE" "$@"

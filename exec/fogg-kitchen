@@ -5,6 +5,7 @@ function main {
   source "$shome/script/profile"
   source normalize
 
+  export KITCHEN_YAML="$(pwd)/.module/fogg-tf/kitchen.yml"
   exec fogg shell kitchen "$@"
 }
 
