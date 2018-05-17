@@ -25,6 +25,10 @@ function main {
       shift # code
       exec fogg code "${AWS_CONFIG_FILE%/config}/assume" "${BASH_SOURCE##*/}"
       ;;
+    exec)
+      shift # exec
+      exec fogg assume "${BASH_SOURCE##*/}" "$@"
+      ;;
     *)
       exec fogg assume "${BASH_SOURCE##*/}" "$@"
       ;;
