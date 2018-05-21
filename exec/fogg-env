@@ -20,7 +20,7 @@ function main {
   fi
 
   if [[ "$#" == 0 ]]; then
-    set -- env
+    set -- "$SHELL"
   fi
 
   exec fogg assume "$nm_profile" ${nm_app:+chamber exec "${nm_app}"} -- "$@"
