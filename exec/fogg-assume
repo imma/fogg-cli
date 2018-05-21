@@ -36,7 +36,6 @@ function main {
   
   aws vault list >/dev/null || true
   if ! aws vault list --sessions | egrep "^${CONTEXT_ORG} session" >/dev/null; then
-    echo "getting aws-vault totp code..." 1>&2
     local code="$("$CONTEXT_ORG" code)"
     aws vault exec "$nm_profile" --assume-role-ttl=60m ${code:+-m "${code}"} -- true
     case "$(uname -s)" in
