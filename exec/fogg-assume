@@ -46,6 +46,7 @@ function main {
   fi
 
   export AWS_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-us-east-1}}"
+  export AWS_DEFAULT_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-us-east-1}}"
 
   local tmp_env="$(mktemp -t XXXXXX)"
   trap "$(printf 'rm -f %q' "$tmp_env")" EXIT
