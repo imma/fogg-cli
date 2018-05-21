@@ -36,8 +36,8 @@ function main {
   
   local code=
 
-  aws-vault list >/dev/null || true
-  if ! aws-vault list --sessions | egrep "^${CONTEXT_ORG} session" >/dev/null; then
+  aws vault list >/dev/null || true
+  if ! aws vault list --sessions | egrep "^${CONTEXT_ORG} session" >/dev/null; then
     echo "getting aws-vault totp code..." 1>&2
     code="$("$CONTEXT_ORG" code)"
   fi
