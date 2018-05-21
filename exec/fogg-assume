@@ -40,6 +40,8 @@ function main {
   if ! aws vault list --sessions | egrep "^${CONTEXT_ORG} session" >/dev/null; then
     echo "getting aws-vault totp code..." 1>&2
     code="$("$CONTEXT_ORG" code)"
+    aws vault exec "$nm_profile" --assume-role-ttl=60m ${code:+-m "${code}"} -- true
+    aws vault exec "$nm_profile" --assume-role-ttl=60m ${code:+-m "${code}"} -- true
   fi
 
   local tmp_env="$(mktemp -t XXXXXX)"
