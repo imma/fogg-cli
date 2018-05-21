@@ -34,38 +34,39 @@ function main {
   export CONTEXT_ORG="$nm_profile"
   unset AWS_SESSION_TOKEN AWS_VAULT AWS_SECRET_ACCESS_KEY AWS_ACCESS_KEY_ID AWS_SECURITY_TOKEN
   
-  local code=
-
   aws vault list >/dev/null || true
   if ! aws vault list --sessions | egrep "^${CONTEXT_ORG} session" >/dev/null; then
     echo "getting aws-vault totp code..." 1>&2
-    code="$("$CONTEXT_ORG" code)"
+    local code="$("$CONTEXT_ORG" code)"
     aws vault exec "$nm_profile" --assume-role-ttl=60m ${code:+-m "${code}"} -- true
     case "$(uname -s)" in
       Darwin)
-        aws vault exec "$nm_profile" --assume-role-ttl=60m ${code:+-m "${code}"} -- true
+        aws vault exec "$nm_profile" --assume-role-ttl=60m -- true
         ;;
     esac
   fi
 
+  export AWS_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-us-east-1}}"
+
   local tmp_env="$(mktemp -t XXXXXX)"
   trap "$(printf 'rm -f %q' "$tmp_env")" EXIT
-  export AWS_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-us-east-1}}"
-  case "${DISTRIB_ID}" in
+
+  case "$(uname -s)" in
     Darwin)
+      aws vault exec "$nm_profile" --assume-role-ttl=60m -- \
+        env
       ;;
     *)
-      if tty >/dev/null; then
-        echo "enter aws-vault key password..." 1>&2
-      fi
+      env $("$nm_profile" gpg --duration-seconds 3600 | jq -r '.Credentials | "AWS_ACCESS_KEY_ID=\(.AccessKeyId) AWS_SECRET_ACCESS_KEY=\(.SecretAccessKey) AWS_SESSION_TOKEN=\(.SessionToken) AWS_EXPIRATION=\(.Expiration)"') \
+        env
       ;;
-  esac
-  aws vault exec "$nm_profile" --assume-role-ttl=60m ${code:+-m "${code}"} -- env | grep ^AWS_ | sed 's#^#export #' > "$tmp_env"
+  esac | grep ^AWS_ | sed 's#^#export #' > "$tmp_env"
+
   if [[ -s "$tmp_env" ]]; then
     source "$tmp_env"
     exec "$@"
   else
-    aws vault exec "$nm_profile" --assume-role-ttl=60m ${code:+-m "${code}"} -- false
+    aws vault exec "$nm_profile" --assume-role-ttl=60m -- false
   fi
   rm -f "$tmp_env"
 
