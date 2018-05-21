@@ -6,6 +6,7 @@ function main {
   source normalize
 
   export KITCHEN_YAML="$(pwd)/.module/fogg-tf/kitchen.yml"
+  export KITCHEN_LOCAL_YAML=.kitchen.local.yml
   exec fogg shell kitchen "$@"
 }
 
