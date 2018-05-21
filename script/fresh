@@ -8,6 +8,8 @@ function main {
     return 1
   fi
 
+  pipenv run python  -c "import onetimepass" 2>/dev/null
+
   return 0
 }
 

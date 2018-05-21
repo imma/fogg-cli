@@ -36,4 +36,4 @@ function main {
 }
 
 unset AWS_VAULT
-source sub-chain imma "$@"
+source sub "$@"

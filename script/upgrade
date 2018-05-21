@@ -4,7 +4,9 @@ function main {
   local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
   source "$shome/script/profile"
 
-  block compile pipenv
+  cd "$shome"
+  
+  block compile pipenv update
 }
 
 main "$@"

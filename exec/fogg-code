@@ -13,7 +13,7 @@ function main {
   local nm_vault="$1"; shift
   local nm_mfa="$1"; shift
 
-  exec op assume "$nm_vault" imma totp "$nm_mfa"
+  exec op assume "$nm_vault" fogg totp "$nm_mfa"
 }
 
 source sub "$BASH_SOURCE" "$@"

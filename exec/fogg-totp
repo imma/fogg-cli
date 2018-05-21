@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+function paste_buffer {
+  cat | if type -P pbcopy >/dev/null; then
+    local a
+    read -n 6 a
+    cat <<< "$a"
+    echo -n "$a" | pbcopy
+  else
+    cat
+  fi
+}
+
+function main {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+  source "$shome/script/profile"
+  source normalize
+
+  local nm_key="$1"; shift
+
+  if [[ -f "${BOARD_PATH}/.aws/${nm_key}.gpg" ]]; then
+    gpg2 -q --batch --yes --decrypt --output - "${BOARD_PATH}/.aws/${nm_key}.gpg" | perl -pe 's{\s*$}{}' | (cd "$shome" && pipenv run imma totp code) | paste_buffer
+  else
+    op totp "$nm_key" | paste_buffer
+  fi
+}
+
+source sub "$BASH_SOURCE" "$@"
