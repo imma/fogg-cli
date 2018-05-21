@@ -16,10 +16,18 @@ function closest_config {
 function main {
   closest_config
 
+  export CONTEXT_ORG="${BASH_SOURCE##*/}"
+
   case "${1:-}" in
     login|assume|logout|env)
       local nm_cmd="$1"; shift
       exec fogg "$nm_cmd" "${BASH_SOURCE##*/}" "$@"
+      ;;
+    gpg)
+      set +f
+      unset AWS_SECURITY_TOKEN
+      env $(gpg2 -q -d ~/.awsvault/keys/$(aws configure --profile ${CONTEXT_ORG} get source_profile).key | ~/work/fogg-cli/main ~/.awsvault/keys/${CONTEXT_ORG}?session* | jq -r .Data | base64 -d | jq -r '"AWS_ACCESS_KEY_ID=\(.AccessKeyId) AWS_SECRET_ACCESS_KEY=\(.SecretAccessKey) AWS_SESSION_TOKEN=\(.SessionToken)"') \
+        aws sts assume-role --role-arn $(aws configure --profile ${CONTEXT_ORG} get role_arn) --role-session-name $(date +%s)
       ;;
     code)
       shift # code
@@ -27,10 +35,10 @@ function main {
       ;;
     exec)
       shift # exec
-      exec fogg assume "${BASH_SOURCE##*/}" "$@"
+      exec fogg assume "${CONTEXT_ORG}" "$@"
       ;;
     *)
-      exec fogg assume "${BASH_SOURCE##*/}" "$@"
+      exec fogg assume "${CONTEXT_ORG}" "$@"
       ;;
   esac
 }
