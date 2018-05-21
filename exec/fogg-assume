@@ -41,7 +41,11 @@ function main {
     echo "getting aws-vault totp code..." 1>&2
     code="$("$CONTEXT_ORG" code)"
     aws vault exec "$nm_profile" --assume-role-ttl=60m ${code:+-m "${code}"} -- true
-    aws vault exec "$nm_profile" --assume-role-ttl=60m ${code:+-m "${code}"} -- true
+    case "$(uname -s)" in
+      Darwin)
+        aws vault exec "$nm_profile" --assume-role-ttl=60m ${code:+-m "${code}"} -- true
+        ;;
+    esac
   fi
 
   local tmp_env="$(mktemp -t XXXXXX)"
