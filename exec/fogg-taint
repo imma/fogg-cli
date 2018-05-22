@@ -3,7 +3,7 @@
 function main {
   local nm_resource="$1"; shift
 
-  tf taint -module="$(echo ${nm_resource} | cut -d. -f2)" "${nm_resource#*.*.}"
+  fogg tf taint -module="$(echo ${nm_resource} | cut -d. -f2)" "${nm_resource#*.*.}"
 }
 
 source sub "$BASH_SOURCE" "$@"
