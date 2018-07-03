@@ -19,7 +19,7 @@ function main {
   closest_config
 
   case "${BASH_SOURCE}" in
-    *-*)
+    *-*|*[0123456789])
       export CONTEXT_ORG="$(readlink "${BASH_SOURCE}")"
 
       local nm_config="${BASH_SOURCE##*/}"
@@ -60,10 +60,17 @@ function main {
 }
 
 case "${BASH_SOURCE}" in
-  *-*)
+  *-*|*[0123456789])
+    export FOGG_ENV_NAME="${BASH_SOURCE##*/}"
+    FOGG_ENV_NAME="${FOGG_ENV_NAME%%-*}"
+
     export FOGG_APP_NAME="${BASH_SOURCE##*/}"
     FOGG_APP_NAME="${FOGG_APP_NAME#*-}"
     FOGG_APP_NAME="${FOGG_APP_NAME%%-*}"
+
+    export FOGG_SVC_NAME="${BASH_SOURCE##*/}"
+    FOGG_SVC_NAME="${FOGG_APP_NAME#*-}"
+    FOGG_SVC_NAME="${FOGG_APP_NAME#*-}"
     ;;
 esac
 
