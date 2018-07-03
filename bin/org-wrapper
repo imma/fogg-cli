@@ -14,9 +14,25 @@ function closest_config {
 }
 
 function main {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+
   closest_config
 
-  export CONTEXT_ORG="${BASH_SOURCE##*/}"
+  case "${BASH_SOURCE}" in
+    *-*)
+      export CONTEXT_ORG="$(readlink "${BASH_SOURCE}")"
+
+      local nm_config="${BASH_SOURCE##*/}"
+      cd "$shome/$(echo "$nm_config" | perl -pe 's{\d+}{}; s{-}{/}g')"
+      local nm_env="${nm_config%%-*}"
+      if [[ "$(cat .terraform/environment)" != "${nm_env}" ]]; then
+        fogg 'select' "${nm_env}"
+      fi
+      ;;
+    *)
+      export CONTEXT_ORG="${BASH_SOURCE##*/}"
+      ;;
+  esac
 
   case "${1:-}" in
     login|assume|logout|env)
@@ -42,6 +58,14 @@ function main {
       ;;
   esac
 }
+
+case "${BASH_SOURCE}" in
+  *-*)
+    export FOGG_APP_NAME="${BASH_SOURCE##*/}"
+    FOGG_APP_NAME="${FOGG_APP_NAME#*-}"
+    FOGG_APP_NAME="${FOGG_APP_NAME%%-*}"
+    ;;
+esac
 
 unset AWS_VAULT
 source sub "$BASH_SOURCE" "$@"
