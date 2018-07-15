@@ -1,4 +1,6 @@
 {
-  "require": [],
+  "require": [
+    "aws-vault"
+  ],
   "versions": {}
 }
