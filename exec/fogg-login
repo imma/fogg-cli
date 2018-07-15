@@ -10,7 +10,7 @@ function main {
   export CONTEXT_ORG="$1"; shift
   local code="$("${CONTEXT_ORG}" code)"
   open 'https://console.aws.amazon.com/iam/logout!doLogout'
-  aws vault login "$CONTEXT_ORG" -t "$code"
+  aws-vault login "$CONTEXT_ORG" -t "$code"
 }
 
 source sub "$BASH_SOURCE" "$@"

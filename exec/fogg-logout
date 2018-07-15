@@ -21,7 +21,7 @@ function main {
 
   export CONTEXT_ORG="$nm_profile"
 
-  aws vault remove "${CONTEXT_ORG}" -s
+  aws-vault remove "${CONTEXT_ORG}" -s
 }
 
 source sub "$BASH_SOURCE" "$@"

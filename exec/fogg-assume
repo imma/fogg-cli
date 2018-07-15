@@ -34,13 +34,13 @@ function main {
   export CONTEXT_ORG="$nm_profile"
   unset AWS_SESSION_TOKEN AWS_VAULT AWS_SECRET_ACCESS_KEY AWS_ACCESS_KEY_ID AWS_SECURITY_TOKEN
   
-  aws vault list >/dev/null || true
-  if ! aws vault list --sessions | egrep "^${CONTEXT_ORG} session" >/dev/null; then
+  aws-vault list >/dev/null || true
+  if ! aws-vault list --sessions | egrep "^${CONTEXT_ORG} session" >/dev/null; then
     local code="$("$CONTEXT_ORG" code)"
-    aws vault exec "$nm_profile" --assume-role-ttl=60m ${code:+-m "${code}"} -- true
+    aws-vault exec "$nm_profile" --assume-role-ttl=60m ${code:+-m "${code}"} -- true
     case "$(uname -s)" in
       Darwin)
-        aws vault exec "$nm_profile" --assume-role-ttl=60m -- true
+        aws-vault exec "$nm_profile" --assume-role-ttl=60m -- true
         ;;
     esac
   fi
@@ -53,7 +53,7 @@ function main {
 
   case "$(uname -s)" in
     Darwin)
-      aws vault exec "$nm_profile" --assume-role-ttl=60m -- \
+      aws-vault exec "$nm_profile" --assume-role-ttl=60m -- \
         env
       ;;
     *)
@@ -66,7 +66,7 @@ function main {
     source "$tmp_env"
     exec "$@"
   else
-    aws vault exec "$nm_profile" --assume-role-ttl=60m -- false
+    aws-vault exec "$nm_profile" --assume-role-ttl=60m -- false
   fi
   rm -f "$tmp_env"
 
